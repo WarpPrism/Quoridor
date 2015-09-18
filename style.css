@@ -1,0 +1,48 @@
+body {
+    padding: 0;
+    margin: 0;
+    background-image: url("res/background.jpg");
+}
+
+#wrapper {
+    width: 100%;
+    height: auto;
+}
+
+#left-column {
+    width: 20%;
+    position: relative;
+    float: left;
+    margin-left: 1.5%;
+    /*border: 1px solid #882222;*/
+}
+
+#right-column {
+    width: 75%;
+    position: relative;
+    float: left;
+    margin-left: 2%;
+    border: 1px solid #222288;
+}
+
+#canvas {
+    margin-left: 20%;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    -webkit-box-shadow: 10px 10px 5px #a65f3c;
+    -moz-box-shadow: 10px 10px 5px #a65f3c;
+}
+
+#title {
+    text-align: center;
+    font-family: cursive;
+    border: 1px solid #882222;
+    color: #882222;
+    transition: all 0.3s ease-in-out;
+}
+
+#title:hover {
+    cursor: pointer;
+    background: #882222;
+    color: #ffffff;
+}
