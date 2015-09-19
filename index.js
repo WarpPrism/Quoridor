@@ -1,6 +1,7 @@
 /**
  * Created by zhoujh on 2015/9/15.
  */
+
 var board;
 var cells = [];
 var clapboards = [];
