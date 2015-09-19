@@ -8,16 +8,41 @@
     <script type="text/javascript" src="./clapboard.js"></script>
     <script type="text/javascript" src="./position.js"></script>
     <link rel="stylesheet" href="./style.css"/>
+
+    <!--<script type="text/javascript" src="dist/semantic.min.js"></script>-->
+    <link rel="stylesheet" href="dist/semantic.min.css"/>
     <title>Quoridor</title>
 </head>
 <body>
-    <div id="wrapper">
-        <div id="left-column">
-            <h1 id="title">Quoridor</h1>
+    <div id="wrapper" class="">
+        <div id="top-bar"></div>
+        <div id="main-bar" class="ui two column grid">
+            <div class="ui four wide column" id="left-column">
+                <div id="title" class="ui huge header">
+                    <i class="game icon"></i>
+                    Quoridor
+                </div>
+
+                <div class="ui vertical fluid menu" id="side-menu">
+                    <div class="header item">
+                        Option
+                        <i class="setting icon"></i>
+                    </div>
+                    <a href="#" class="item">New Game</a>
+                    <a href="#" class="item">Last Step</a>
+                    <div class="header item">
+                        About
+                        <i class="pointing right icon"></i>
+                    </div>
+                    <a href="#" class="item">Game Rules</a>
+                    <a href="#" class="item">About Quoridor</a>
+                </div>
+            </div>
+            <div class="ui twelve wide column" id="right-column">
+                <canvas id="canvas"></canvas>
+            </div>
         </div>
-        <div id="right-column">
-            <canvas id="canvas"></canvas>
-        </div>
+        <div id="bottom-bar"></div>
     </div>
 </body>
 </html>

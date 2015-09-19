@@ -24,40 +24,29 @@ window.onload = function() {
                 break;
         }
     });*/
-    board = new ChessBoard();
-    board.init();
-    /*board.getValidDirections(board.player2);
-    for (var i = 0; i < board.player2.moveDirection.length; i++) {
-        console.log(board.player2.moveDirection[i]);
-    }
-    console.log(board.ChessPieceArray[0].up);*/
-    board.getValidDirections(board.player1);
-    board.getValidDirections(board.player2);
-    board.player1.getValidMovePositions();
-    board.player2.getValidMovePositions();
-
-
     var right_column = document.getElementById("right-column");
     var right_column_width = parseInt(right_column.offsetWidth * 0.6);
     canvas = document.getElementById("canvas");
-    canvas.width = right_column_width;
     canvas.height = right_column_width;
+    canvas.width = right_column_width;
     cxt = canvas.getContext("2d");
     gap = canvas.width / 37.0;
     cell_width =  3.0 * gap;
+
+    board = new ChessBoard();
+    board.init();
     getCells();
     getClapBoards();
     drawChessBoard(canvas.width);
-
-    /*board.player1.moveToward(2);
-    getCellsAndClapboard(board);
-    drawChessBoard(canvas.width, board);*/
 
     canvas.addEventListener("mouseup", detectClick);
 };
 
 function drawChessBoard(width) {
+    board.player1.getValidMovePositions();
+    board.player2.getValidMovePositions();
 
+    cxt.clearRect(0, 0, canvas.width, canvas.width);
     for (var i = 0; i < cells.length; i++) {
         var c = cells[i];
         if (c.obj == board.player1) {
@@ -156,50 +145,46 @@ function getClapBoards() {
 function detectClick(event) {
     var x = parseFloat(event.clientX) - parseFloat(canvas.getBoundingClientRect().left);
     var y = parseFloat(event.clientY) - parseFloat(canvas.getBoundingClientRect().top);
-    handleCells(x, y);
-    handleClapboards(x, y);
+    var current_player = board.player1.turn == true ? board.player1 : board.player2;
+    var next_player = board.player1.turn == true ? board.player2 : board.player1;
 
+    var cc = board.player1.turn == true ? "Player2" : "Player1";
+    console.log(cc);
+
+    if (handleCells(x, y, current_player, next_player) == true) {
+        return;
+    }
+    handleClapboards(x, y, current_player, next_player);
 }
 
-function handleCells(x, y) {
+function handleCells(x, y, current_player, next_player) {
+    var find = false;
     for (var i = 0; i < cells.length; i++) {
         var c = cells[i];
-        var find = false;
         cxt.beginPath();
         cxt.rect(c.x, c.y, c.w, c.h);
         if (cxt.isPointInPath(x, y)) {
             find = true;
-            for (var j = 0; j < board.player1.valid_pos.length; j++) {
-                var Pos1 = board.player1.valid_pos[j];
+            for (var j = 0; j < current_player.valid_pos.length; j++) {
+                var Pos1 = current_player.valid_pos[j];
                 /*console.log(Pos.x, Pos.y, c.i, c.j);*/
                 if ((Pos1.x == c.i) && (Pos1.y == c.j)) {
-                    board.player1.moveToPos(Pos1);
+                    current_player.moveToPos(Pos1);
+                    current_player.turn = false;
+                    next_player.turn = true;
                     getCells();
                     drawChessBoard(canvas.width);
-                    board.getValidDirections(board.player1);
-                    board.player1.getValidMovePositions();
+                    if (current_player.isWin()) {
+                        gameOver();
+                    }
+                    return find;
                 }
             }
-
-            for (var j = 0; j < board.player2.valid_pos.length; j++) {
-                var Pos2 = board.player2.valid_pos[j];
-                /*console.log(Pos.x, Pos.y, c.i, c.j);*/
-                if ((Pos2.x == c.i) && (Pos2.y == c.j)) {
-                    board.player2.moveToPos(Pos2);
-                    getCells();
-                    cxt.clearRect(0, 0, canvas.width, canvas.width);
-                    drawChessBoard(canvas.width);
-                    board.getValidDirections(board.player2);
-                    board.player2.getValidMovePositions();
-                }
-            }
-        }
-        if (find == true) {
-            return;
         }
     }
+    return find;
 }
-function handleClapboards(x, y) {
+function handleClapboards(x, y, current_player, next_player) {
     var cbs = [];
     for (var k = 0; k < clapboards.length; k++) {
         var cb = clapboards[k];
@@ -225,33 +210,36 @@ function handleClapboards(x, y) {
     if (cbs[which].obj == 0) {
         flag = true;
         another = (cbs[which].state == 0) ? 1: 0;
-        if (cbs.length != 1) {
-            if (cbs[which].state == 0) {
-                if (board.ClapBoardArray[cbs[which].i][cbs[which].j - 1][cbs[which].state] != 0) {
-                    flag = false;
-                }
-                if (board.ClapBoardArray[cbs[which].i][cbs[which].j + 1][cbs[which].state] != 0) {
-                    flag = false;
-                }
-            } else if (cbs[which].state == 1) {
-                if (board.ClapBoardArray[cbs[which].i - 1][cbs[which].j][cbs[which].state] != 0) {
-                    flag = false;
-                }
-                if (board.ClapBoardArray[cbs[which].i + 1][cbs[which].j][cbs[which].state] != 0) {
-                    flag = false;
-                }
+        var cbi = cbs[which].i;
+        var cbj = cbs[which].j;
+        // 判断这个位置是不是已经有木板，如果有，flag = false.
+        if (cbs[which].state == 0) {
+            if ((cbj - 1) >= 0 && board.ClapBoardArray[cbi][cbj - 1][cbs[which].state] != 0) {
+                flag = false;
+            }
+            if ((cbj + 1) < 8 && board.ClapBoardArray[cbi][cbj + 1][cbs[which].state] != 0) {
+                flag = false;
+            }
+        } else if (cbs[which].state == 1) {
+            if ((cbi - 1) >= 0 && board.ClapBoardArray[cbi - 1][cbj][cbs[which].state] != 0) {
+                flag = false;
+            }
+            if ((cbi + 1) < 8 && board.ClapBoardArray[cbi + 1][cbj][cbs[which].state] != 0) {
+                flag = false;
             }
         }
-        if (board.ClapBoardArray[cbs[which].i][cbs[which].j][another] != 0) {
+        if (board.ClapBoardArray[cbi][cbj][another] != 0) {
             flag = false;
         }
         console.log(flag);
 
         if (flag == true) {
-            temp = new ClapBoard(cbs[which].i, cbs[which].j, cbs[which].state);
-            board.ClapBoardArray[cbs[which].i][cbs[which].j][cbs[which].state] = temp;
+            current_player.putClapboard(cbi, cbj, cbs[which].state);
+            current_player.turn = false;
+            next_player.turn = true;
+            temp = new ClapBoard(cbi, cbj, cbs[which].state);
+            board.ClapBoardArray[cbi][cbj][cbs[which].state] = temp;
             getClapBoards();
-            cxt.clearRect(0, 0, canvas.width, canvas.width);
             drawChessBoard(canvas.width);
         } else {
             console.log("This place already has a clapboard.");
@@ -261,4 +249,12 @@ function handleClapboards(x, y) {
     while (cbs.length > 0) {
         cbs.pop();
     }
+}
+
+function gameOver() {
+    alert("Game Over!");
+    board.init();
+    getCells();
+    getClapBoards();
+    drawChessBoard(canvas.width);
 }

@@ -3,14 +3,15 @@
  */
 // Define ChessPiece "Class"
 function Player(pos, board) {
+    this.init_pos = pos;
     this.pos = pos;
-    this.moveDirection = [];
     this.valid_pos = [];
-    this.clapboard = [];
+    this.clapboardNum = 10;
     this.board = board;
+    this.turn = false;
 }
 
-Player.prototype.moveToward = function(dir) {
+/*Player.prototype.moveToward = function(dir) {
     // dir:the direction for moving
     if (this.moveDirection[dir] != 0) {
         var new_pos;
@@ -40,7 +41,7 @@ Player.prototype.moveToward = function(dir) {
         this.board.ChessPieceArray[old_x + old_y * WIDTH].object = null;
         this.board.ChessPieceArray[this.pos.x + this.pos.y * WIDTH].object = this;
     }
-};
+};*/
 
 Player.prototype.moveToPos = function(pos) {
     var old_x = this.pos.x;
@@ -50,48 +51,58 @@ Player.prototype.moveToPos = function(pos) {
     this.board.ChessPieceArray[this.pos.x + this.pos.y * WIDTH].object = this;
 };
 
-/*Player.prototype.putClapboard = function(pos1, pos2, pos3, pos4, state) {
-    var cb = null;
-    // 检查隔板4个位置的状态
-    if (pos1.x + 1 == pos2.x && pos1.y == pos2.y &&
-        pos2.x - 1 == pos3.x && pos2.y + 1 == pos3.y &&
-        pos3.x + 1 == pos4.x && pos3.y == pos4.y) {
-        // 检查隔板横竖的状态
-        if (state == 0 || state == 1) {
-            // 确定位置可移动的方向
-            if (state == 0) {
-                // 0 横向
-                pos1.down = 0;
-                pos2.down = 0;
-                pos3.up = 0;
-                pos4.up = 0;
-            } else if (state == 1) {
-                // 1 纵向
-                pos1.right = 0;
-                pos2.left = 0;
-                pos3.right = 0;
-                pos4.right = 0;
-            }
-            cb = new ClapBoard(pos1, pos2, pos3, pos4, state);
-            this.board.ClapBoardArray[pos1.x][pos1.y][state] = cb;
-        }
+Player.prototype.putClapboard = function(cbi, cbj, state) {
+    var pos1 = this.board.ChessPieceArray[cbi * WIDTH + cbj];
+    var pos2 = this.board.ChessPieceArray[cbi * WIDTH + cbj + 1];
+    var pos3 = this.board.ChessPieceArray[(cbi + 1) * WIDTH + cbj];
+    var pos4 = this.board.ChessPieceArray[(cbi + 1) * WIDTH + cbj + 1];
+    if (state == 0) {
+        // 0 横向
+        pos1.down = 0;
+        pos2.down = 0;
+        pos3.up = 0;
+        pos4.up = 0;
+    } else if (state == 1) {
+        // 1 纵向
+        pos1.right = 0;
+        pos2.left = 0;
+        pos3.right = 0;
+        pos4.left = 0;
     }
-};*/
+};
 
 Player.prototype.getValidMovePositions = function() {
     while (this.valid_pos.length > 0) {
         this.valid_pos.pop();
     }
-    if (this.moveDirection[0] == 1) {
-        this.valid_pos.push(new Position(this.pos.x, this.pos.y - 1));
+    var new_pos;
+    if (this.pos.up == 1) {
+        new_pos = this.board.ChessPieceArray[(this.pos.y - 1) * WIDTH + this.pos.x];
+        this.valid_pos.push(new_pos);
     }
-    if (this.moveDirection[1] == 1) {
-        this.valid_pos.push(new Position(this.pos.x, this.pos.y + 1));
+    if (this.pos.down == 1) {
+        new_pos = this.board.ChessPieceArray[(this.pos.y + 1) * WIDTH + this.pos.x];
+        this.valid_pos.push(new_pos);
     }
-    if (this.moveDirection[2] == 1) {
-        this.valid_pos.push(new Position(this.pos.x - 1, this.pos.y));
+    if (this.pos.left == 1) {
+        new_pos = this.board.ChessPieceArray[(this.pos.y) * WIDTH + this.pos.x - 1];
+        this.valid_pos.push(new_pos);
     }
-    if (this.moveDirection[3] == 1) {
-        this.valid_pos.push(new Position(this.pos.x + 1, this.pos.y));
+    if (this.pos.right == 1) {
+        new_pos = this.board.ChessPieceArray[(this.pos.y) * WIDTH + this.pos.x + 1];
+        this.valid_pos.push(new_pos);
     }
+};
+
+Player.prototype.isWin = function() {
+    if (this.init_pos.y == 0) {
+        if (this.pos.y == 8) {
+            return true;
+        }
+    } else if (this.init_pos.y == 8) {
+        if (this.pos.y == 0) {
+            return true;
+        }
+    }
+    return false;
 };
