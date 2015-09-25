@@ -69,6 +69,7 @@ Player.prototype.putClapboard = function(cbi, cbj, state) {
         pos3.right = 0;
         pos4.left = 0;
     }
+    this.clapboardNum--;
 };
 
 Player.prototype.getValidMovePositions = function() {
@@ -76,21 +77,54 @@ Player.prototype.getValidMovePositions = function() {
         this.valid_pos.pop();
     }
     var new_pos;
+    var new_pos_next;
     if (this.pos.up == 1) {
         new_pos = this.board.ChessPieceArray[(this.pos.y - 1) * WIDTH + this.pos.x];
-        this.valid_pos.push(new_pos);
+        if (new_pos.isValid() && new_pos.object == null) {
+            this.valid_pos.push(new_pos);
+        }
+        if (new_pos.object != null) {
+            new_pos_next = this.board.getPositionInDir(new_pos, 0);
+            if (new_pos.up == 1) {
+                this.valid_pos.push(new_pos_next);
+            }
+        }
     }
     if (this.pos.down == 1) {
         new_pos = this.board.ChessPieceArray[(this.pos.y + 1) * WIDTH + this.pos.x];
-        this.valid_pos.push(new_pos);
+        if (new_pos.isValid() && new_pos.object == null) {
+            this.valid_pos.push(new_pos);
+        }
+        if (new_pos.object != null) {
+            new_pos_next = this.board.getPositionInDir(new_pos, 1);
+            if (new_pos.down == 1) {
+                this.valid_pos.push(new_pos_next);
+            }
+        }
     }
     if (this.pos.left == 1) {
         new_pos = this.board.ChessPieceArray[(this.pos.y) * WIDTH + this.pos.x - 1];
-        this.valid_pos.push(new_pos);
+        if (new_pos.isValid() && new_pos.object == null) {
+            this.valid_pos.push(new_pos);
+        }
+        if (new_pos.object != null) {
+            new_pos_next = this.board.getPositionInDir(new_pos, 2);
+            if (new_pos.left == 1) {
+                this.valid_pos.push(new_pos_next);
+            }
+        }
     }
     if (this.pos.right == 1) {
         new_pos = this.board.ChessPieceArray[(this.pos.y) * WIDTH + this.pos.x + 1];
-        this.valid_pos.push(new_pos);
+        if (new_pos.isValid() && new_pos.object == null) {
+            this.valid_pos.push(new_pos);
+        }
+        if (new_pos.object != null) {
+            new_pos_next = this.board.getPositionInDir(new_pos, 3);
+            if (new_pos.right == 1) {
+                this.valid_pos.push(new_pos_next);
+            }
+        }
     }
 };
 

@@ -65,3 +65,55 @@ ChessBoard.prototype.init = function() {
     this.ChessPieceArray[4].object = this.player1;
     this.ChessPieceArray[WIDTH * 8 + 4].object = this.player2;
 };
+
+ChessBoard.prototype.getPositionInDir = function(pos, dir) {
+    var x = pos.x;
+    var y = pos.y;
+    var new_x;
+    var new_y;
+    var index;
+    switch (dir) {
+        case 0:
+            new_x = x;
+            new_y = y - 1;
+            index = WIDTH * new_y + new_x;
+            if (index >= 0 && index < 81) {
+                return this.ChessPieceArray[index];
+            } else {
+                return false;
+            }
+            break;
+        case 1:
+            new_x = x;
+            new_y = y + 1;
+            index = WIDTH * new_y + new_x;
+            if (index >= 0 && index < 81) {
+                return this.ChessPieceArray[index];
+            } else {
+                return false;
+            }
+            break;
+        case 2:
+            new_x = x - 1;
+            new_y = y;
+            index = WIDTH * new_y + new_x;
+            if (index >= 0 && index < 81) {
+                return this.ChessPieceArray[index];
+            } else {
+                return false;
+            }
+            break;
+        case 3:
+            new_x = x + 1;
+            new_y = y;
+            index = WIDTH * new_y + new_x;
+            if (index >= 0 && index < 81) {
+                return this.ChessPieceArray[index];
+            } else {
+                return false;
+            }
+            break;
+        default:
+            return false;
+    }
+};

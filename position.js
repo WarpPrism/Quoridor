@@ -26,3 +26,7 @@ function Position(x, y) {
         this.down = 0;
     }
 }
+
+Position.prototype.isValid = function() {
+    return this.x >= 0 && this.x < 9 && this.y >= 0 && this.y < 9;
+};

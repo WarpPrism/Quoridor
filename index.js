@@ -9,6 +9,11 @@ var gap;
 var cell_width;
 var canvas;
 var cxt;
+// Game Information
+var redLeft;
+var blueLeft;
+var whoseTurn;
+var prompt;
 
 
 window.onload = function() {
@@ -25,6 +30,11 @@ window.onload = function() {
                 break;
         }
     });*/
+    redLeft = document.getElementById("red-left");
+    blueLeft = document.getElementById("blue-left");
+    whoseTurn = document.getElementById("whose-turn");
+    prompt = document.getElementById("prompt-message");
+
     var right_column = document.getElementById("right-column");
     var right_column_width = parseInt(right_column.offsetWidth * 0.6);
     canvas = document.getElementById("canvas");
@@ -34,30 +44,41 @@ window.onload = function() {
     gap = canvas.width / 37.0;
     cell_width =  3.0 * gap;
 
-    board = new ChessBoard();
-    board.init();
-    getCells();
-    getClapBoards();
-    drawChessBoard(canvas.width);
+    newGame();
 
     canvas.addEventListener("mouseup", detectClick);
+    canvas.addEventListener("mousemove", detectHover);
+    interaction();
 };
 
 function drawChessBoard(width) {
-    board.player1.getValidMovePositions();
-    board.player2.getValidMovePositions();
-
     cxt.clearRect(0, 0, canvas.width, canvas.width);
     for (var i = 0; i < cells.length; i++) {
         var c = cells[i];
-        if (c.obj == board.player1) {
-            cxt.fillStyle = "blue";
-        } else if (c.obj == board.player2) {
-            cxt.fillStyle = "yellow";
-        } else {
-            cxt.fillStyle = "#242329";
-        }
+        cxt.fillStyle = "#242329";
         cxt.fillRect(c.x, c.y, c.w, c.h);
+        if (c.obj == board.player1) {
+            cxt.beginPath();
+            cxt.strokeStyle = "#FFF";
+            cxt.lineWidth = 7;
+            cxt.arc(c.x + c.w / 2, c.y + c.h / 2, c.w / 2 - 5, 0, 2 * Math.PI);
+            cxt.closePath();
+            cxt.stroke();
+            cxt.fillStyle = "#AE0000";
+            cxt.fill();
+        } else if (c.obj == board.player2) {
+            cxt.beginPath();
+            cxt.strokeStyle = "#FFF";
+            cxt.lineWidth = 7;
+            cxt.arc(c.x + c.w / 2, c.y + c.h / 2, c.w / 2 - 5, 0, 2 * Math.PI);
+            cxt.closePath();
+            cxt.stroke();
+            cxt.fillStyle = "#003D79";
+            cxt.fill();
+        } else {
+            /*cxt.fillStyle = "#242329";
+            cxt.fillRect(c.x, c.y, c.w, c.h);*/
+        }
     }
 
     for (var j = 0; j < clapboards.length; j++) {
@@ -109,6 +130,7 @@ function getCells() {
         cells.push(a_cell);
     }
 }
+
 function getClapBoards() {
     while (clapboards.length > 0) {
         clapboards.pop();
@@ -149,13 +171,15 @@ function detectClick(event) {
     var current_player = board.player1.turn == true ? board.player1 : board.player2;
     var next_player = board.player1.turn == true ? board.player2 : board.player1;
 
-    var cc = board.player1.turn == true ? "Player2" : "Player1";
-    console.log(cc);
+    /*var cc = board.player1.turn == true ? "Player2" : "Player1";
+    console.log(cc);*/
 
     if (handleCells(x, y, current_player, next_player) == true) {
         return;
     }
     handleClapboards(x, y, current_player, next_player);
+    redLeft.innerHTML = board.player1.clapboardNum;
+    blueLeft.innerHTML = board.player2.clapboardNum;
 }
 
 function handleCells(x, y, current_player, next_player) {
@@ -173,10 +197,23 @@ function handleCells(x, y, current_player, next_player) {
                     current_player.moveToPos(Pos1);
                     current_player.turn = false;
                     next_player.turn = true;
+                    if (next_player == board.player1) {
+                        whoseTurn.innerHTML = "红方";
+                    } else {
+                        whoseTurn.innerHTML = "蓝方";
+                    }
                     getCells();
+                    board.player1.getValidMovePositions();
+                    board.player2.getValidMovePositions();
                     drawChessBoard(canvas.width);
                     if (current_player.isWin()) {
-                        gameOver();
+                        if (current_player == board.player1) {
+                            alert("红方胜！");
+                            prompt.innerHTML = "红方胜！";
+                        } else {
+                            alert("蓝方胜！");
+                            prompt.innerHTML = "蓝方胜！";
+                        }
                     }
                     return find;
                 }
@@ -185,6 +222,7 @@ function handleCells(x, y, current_player, next_player) {
     }
     return find;
 }
+
 function handleClapboards(x, y, current_player, next_player) {
     var cbs = [];
     for (var k = 0; k < clapboards.length; k++) {
@@ -198,7 +236,6 @@ function handleClapboards(x, y, current_player, next_player) {
             }
         }
     }
-    console.log(cbs.length);
     var temp;
     var which;
     var another;
@@ -235,15 +272,27 @@ function handleClapboards(x, y, current_player, next_player) {
         console.log(flag);
 
         if (flag == true) {
+            if (current_player.clapboardNum <= 0) {
+                prompt.innerHTML = "你没有挡板了，只能移动棋子。";
+                return;
+            }
             current_player.putClapboard(cbi, cbj, cbs[which].state);
             current_player.turn = false;
             next_player.turn = true;
+            if (next_player == board.player1) {
+                whoseTurn.innerHTML = "红方";
+            } else {
+                whoseTurn.innerHTML = "蓝方";
+            }
+            getCells();
             temp = new ClapBoard(cbi, cbj, cbs[which].state);
             board.ClapBoardArray[cbi][cbj][cbs[which].state] = temp;
             getClapBoards();
+            board.player1.getValidMovePositions();
+            board.player2.getValidMovePositions();
             drawChessBoard(canvas.width);
         } else {
-            console.log("This place already has a clapboard.");
+            prompt.innerHTML = "这里已经有挡板了。";
         }
     }
 
@@ -252,10 +301,45 @@ function handleClapboards(x, y, current_player, next_player) {
     }
 }
 
-function gameOver() {
-    alert("Game Over!");
+function detectHover(event) {
+    var x = parseFloat(event.clientX) - parseFloat(canvas.getBoundingClientRect().left);
+    var y = parseFloat(event.clientY) - parseFloat(canvas.getBoundingClientRect().top);
+    var cbs = [];
+    for (var k = 0; k < clapboards.length; k++) {
+        var cb = clapboards[k];
+        cxt.beginPath();
+        cxt.rect(cb.x, cb.y, cb.w, cb.h);
+        if (cxt.isPointInPath(x, y)) {
+            cbs.push(cb);
+            if (cbs.length >= 2) {
+                break;
+            }
+        }
+    }
+    var which = -1;
+    if (cbs.length == 1) {
+        which = 0;
+    } else if (cbs.length == 2) {
+        which = 1;
+    }
+    if (which != -1) {
+        drawChessBoard(canvas.width);
+        cxt.fillStyle = "rgba(242, 228, 124, 0.5)";
+        cxt.fillRect(cbs[which].x, cbs[which].y, cbs[which].w, cbs[which].h);
+    } else {
+        drawChessBoard(canvas.width);
+    }
+}
+
+function newGame() {
+    board = new ChessBoard();
     board.init();
     getCells();
     getClapBoards();
+    board.player1.getValidMovePositions();
+    board.player2.getValidMovePositions();
+    redLeft.innerHTML = board.player1.clapboardNum;
+    blueLeft.innerHTML = board.player2.clapboardNum;
+    whoseTurn.innerHTML = "红方";
     drawChessBoard(canvas.width);
 }
