@@ -1,0 +1,125 @@
+body {
+    font-family: cursive;
+}
+#wrapper {
+    padding: 0;
+    margin: 0;
+    background: #F7EED6;
+}
+#main-bar {
+    margin: 0 auto;
+}
+
+#top-bar {
+    width: 100%;
+    height: 20px;
+    background: #a5673f;
+}
+
+#bottom-bar {
+    width: 100%;
+    text-align: center;
+    color: #fff;
+    background: #a5673f;
+}
+
+#bottom-bar a {
+    color: #fff;
+    text-decoration: underline;
+}
+
+#left-column {
+    border: 6px solid #a5673f;
+}
+
+#right-column {
+    border: 6px solid #a5673f;
+}
+
+#side-menu {
+    background: rgba(0, 0, 0, 0);
+    border: none;
+}
+#side-menu a.item {
+    text-align: center;
+    font-family: cursive;
+    border: 1px solid #a5673f;
+    color: #a5673f;
+    margin: 10px 0;
+
+    -webkit-transition: all 0.3s;
+    -moz-transition: all 0.3s;
+    -o-transition: all 0.3s;
+    transition: all 0.3s;
+}
+
+#side-menu a.item:hover {
+    background: #a5673f;
+    color: #ffffff;
+    -webkit-transform: translateX(15px);
+    -moz-transform: translateX(15px);
+    -ms-transform: translateX(15px);
+    -o-transform: translateX(15px);
+    transform: translateX(15px);
+}
+
+#side-menu .header.item {
+    border: 4px solid #a5673f;
+    /*background-color: rgba(165, 103, 63, 0.8);*/
+    font-weight: bold;
+    color: #a5673f;
+    margin: 10px 0;
+    transition: all 0.3s ease-in-out;
+}
+
+#side-menu .header.item:hover {
+    -webkit-box-shadow: 5px 5px 5px #a5673f;
+    -moz-box-shadow: 5px 5px 5px #a5673f;
+    box-shadow: 5px 5px 5px #a5673f;
+}
+
+#canvas {
+    margin-left: 7%;
+    margin-top: 1%;
+    margin-bottom: 1%;
+    -webkit-box-shadow: 10px 10px 15px gray;
+    -moz-box-shadow: 10px 10px 15px gray;
+    box-shadow: 10px 10px 15px gray;
+    cursor: pointer;
+}
+
+#title {
+    text-align: center;
+    color: #a5673f;
+    font-family: cursive;
+    -webkit-transition: all 0.3s ease-in-out;
+    -moz-transition: all 0.3s ease-in-out;
+    -o-transition: all 0.3s ease-in-out;
+    transition: all 0.3s ease-in-out;
+
+    margin-top: 15px;
+    -webkit-border-radius: 55%;
+    -moz-border-radius: 55%;
+    border-radius: 20px;
+}
+
+#title:hover {
+    cursor: pointer;
+    background: #a5673f;
+    color: #ffffff;
+}
+
+#game-info {
+    margin-top: 20px;
+    position: relative;
+    width: 25%;
+    float: right;
+    border: 2px solid #a5673f;
+    -webkit-box-shadow: 5px 5px 15px gray;
+    -moz-box-shadow: 5px 5px 15px gray;
+    box-shadow: 5px 5px 15px gray;
+}
+
+#game-info a {
+    font-weight: bold;
+}
