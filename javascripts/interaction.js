@@ -17,5 +17,5 @@ function interaction() {
 
     $('#new-game').click(function() {
         newGame();
-    })
+    });
 }
